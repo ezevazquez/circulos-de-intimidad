@@ -4,12 +4,27 @@ import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import IntimacyCircles from "@/components/intimacy-circles"
 import TextInputModal from "@/components/text-input-modal"
+import { Input } from "@/components/ui/input"
+
+const PASSWORD = "787"
 
 export default function Home() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [password, setPassword] = useState("")
   const [circleTexts, setCircleTexts] = useState<string[]>(["", "", "", "", ""])
   const [selectedCircle, setSelectedCircle] = useState<number | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const canvasRef = useRef<HTMLDivElement>(null)
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (password === PASSWORD) {
+      setIsAuthenticated(true)
+    } else {
+      alert("Contraseña incorrecta")
+      setPassword("")
+    }
+  }
 
   const handleCircleClick = (index: number) => {
     setSelectedCircle(index)
@@ -52,6 +67,41 @@ export default function Home() {
       console.error("Error generating image:", error)
       alert("Error al descargar la imagen. Por favor, intenta de nuevo.")
     }
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6" style={{ backgroundColor: "#FAFAFA" }}>
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-slate-900 tracking-tight mb-2">Círculo de</h1>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-slate-900 tracking-tight mb-8">intimidad</h1>
+          </div>
+          
+          <form onSubmit={handlePasswordSubmit} className="bg-white p-8 rounded-lg shadow-sm">
+            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+              Ingresa la contraseña
+            </label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="•••"
+              maxLength={3}
+              className="text-center text-2xl tracking-widest mb-4"
+              autoFocus
+            />
+            <Button
+              type="submit"
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-lg font-medium"
+            >
+              Ingresar
+            </Button>
+          </form>
+        </div>
+      </main>
+    )
   }
 
   return (

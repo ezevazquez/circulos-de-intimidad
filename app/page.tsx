@@ -80,7 +80,7 @@ export default function Home() {
           
           <form onSubmit={handlePasswordSubmit} className="bg-white p-8 rounded-lg shadow-sm">
             <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
-              Ingresa la contraseña
+              Si viniste a la CDA, tenés la contraseña
             </label>
             <Input
               id="password"

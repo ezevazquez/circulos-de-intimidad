@@ -11,31 +11,31 @@ const CIRCLE_CONFIG = [
   {
     id: 0,
     radius: 40,
-    color: "rgba(255, 255, 255, 0.95)",
+    color: "rgba(255, 214, 214, 0.95)", // Rosa muy suave (casi blanco)
     label: "Nivel 1",
   },
   {
     id: 1,
     radius: 80,
-    color: "rgba(15, 23, 42, 0.08)",
+    color: "rgba(255, 213, 166, 0.6)", // Rosa pastel
     label: "Nivel 2",
   },
   {
     id: 2,
     radius: 120,
-    color: "rgba(51, 65, 85, 0.1)",
+    color: "rgba(194, 231, 255, 0.6)", // Azul cielo pastel
     label: "Nivel 3",
   },
   {
     id: 3,
     radius: 160,
-    color: "rgba(71, 85, 105, 0.12)",
+    color: "rgba(191, 255, 213, 0.6)", // Verde menta pastel
     label: "Nivel 4",
   },
   {
     id: 4,
     radius: 200,
-    color: "rgba(100, 116, 139, 0.15)",
+    color: "rgba(237, 233, 254, 0.6)", // Lavanda pastel
     label: "Nivel 5",
   },
 ]
@@ -45,13 +45,13 @@ export default function IntimacyCircles({ texts, onCircleClick }: IntimacyCircle
   const containerSize = 420
 
   // Helper function to create arc path for text at the top of circle (inside the circle)
-  const createArcPath = (radius: number) => {
+  const createArcPath = (radius: number, offset = 0) => {
     const centerX = radius
     const centerY = radius
     // Keep text just inside the circle border
     const padding = Math.max(radius * 0.08, 10)
     const innerRadius = radius - padding
-    const adjustedRadius = Math.max(innerRadius - 2, 0)
+    const adjustedRadius = Math.max(innerRadius - 2 - offset, 0)
     // Create a spread around the top (270°) so text hugs the circle curvature
     const spread = (160 * Math.PI) / 180 // ~160° arc along the top
     const centerAngle = (3 * Math.PI) / 2 // 270° (top)
@@ -93,7 +93,7 @@ export default function IntimacyCircles({ texts, onCircleClick }: IntimacyCircle
               className="absolute rounded-full cursor-pointer w-full h-full"
               style={{
                 backgroundColor: config.color,
-                border: config.id === 0 ? "2px solid rgba(15, 23, 42, 0.1)" : "2px solid rgba(15, 23, 42, 0.15)",
+                border: "2px solid rgba(51, 65, 85, 0.8)",
                 boxShadow: hoveredCircle === config.id ? "0 8px 24px rgba(15, 23, 42, 0.15)" : config.id === 4 ? "0 2px 8px rgba(0, 0, 0, 0.1)" : "none",
               }}
             />
@@ -113,20 +113,22 @@ export default function IntimacyCircles({ texts, onCircleClick }: IntimacyCircle
               >
                 {texts[config.id] ? (
                   <p
-                    className="font-bold text-slate-900 break-words"
+                    className="font-bold break-words"
                     style={{
                       fontSize: "11px",
                       maxWidth: "80%",
                       lineHeight: "1.2",
+                      color: "#0f172a",
                     }}
                   >
                     {texts[config.id]}
                   </p>
                 ) : (
                   <p
-                    className="font-medium text-slate-400 opacity-60 text-center"
+                    className="font-medium text-center"
                     style={{
                       fontSize: "10px",
+                      color: "rgba(100, 116, 139, 0.7)",
                     }}
                   >
                     Toca para añadir
@@ -148,15 +150,16 @@ export default function IntimacyCircles({ texts, onCircleClick }: IntimacyCircle
                 <defs>
                   <path
                     id={`circle-path-${config.id}`}
-                    d={createArcPath(config.radius)}
+                    d={createArcPath(config.radius, config.id === 1 ? 4 : 0)}
                   />
                 </defs>
                 {texts[config.id] ? (
                   <text
-                    className="font-bold fill-slate-900"
+                    fill="#0f172a"
                     style={{
                       fontSize: config.radius < 100 ? "11px" : config.radius < 140 ? "12px" : "13px",
                     }}
+                    fontWeight="700"
                     dominantBaseline="middle"
                   >
                     <textPath
@@ -169,12 +172,12 @@ export default function IntimacyCircles({ texts, onCircleClick }: IntimacyCircle
                   </text>
                 ) : (
                   <text
-                    className="font-medium fill-slate-500"
+                    fill="rgba(100, 116, 139, 0.7)"
                     style={{
                       fontSize: config.radius < 100 ? "10px" : "11px",
-                      opacity: 0.7,
                     }}
                     dominantBaseline="middle"
+                    fontWeight="500"
                   >
                     <textPath
                       href={`#circle-path-${config.id}`}

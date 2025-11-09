@@ -29,24 +29,33 @@ export default function Home() {
     const element = canvasRef.current
     if (!element) return
 
-    // Dynamic import for html2canvas
-    const html2canvas = (await import("html2canvas")).default
+    try {
+      // Use dom-to-image which handles modern CSS colors better
+      // @ts-ignore - dom-to-image doesn't have type definitions
+      const domtoimage = (await import("dom-to-image")).default || (await import("dom-to-image"))
+      
+      const dataUrl = await (domtoimage as any).toPng(element, {
+        bgcolor: "#FAFAFA",
+        width: element.offsetWidth * 2,
+        height: element.offsetHeight * 2,
+        style: {
+          transform: "scale(2)",
+          transformOrigin: "top left",
+        },
+      })
 
-    const canvas = await html2canvas(element, {
-      backgroundColor: "#ffffff",
-      scale: 2,
-      allowTaint: true,
-      useCORS: true,
-    })
-
-    const link = document.createElement("a")
-    link.href = canvas.toDataURL("image/png")
-    link.download = "circulo-intimidad.png"
-    link.click()
+      const link = document.createElement("a")
+      link.href = dataUrl
+      link.download = "circulo-intimidad.png"
+      link.click()
+    } catch (error) {
+      console.error("Error generating image:", error)
+      alert("Error al descargar la imagen. Por favor, intenta de nuevo.")
+    }
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col items-center justify-center p-4 sm:p-6">
+    <main className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6" style={{ backgroundColor: "#FAFAFA" }}>
       {/* Header */}
       <div className="w-full max-w-2xl mb-8 sm:mb-12 text-center">
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-slate-900 tracking-tight mb-2">Círculo de</h1>
@@ -54,7 +63,7 @@ export default function Home() {
       </div>
 
       {/* Circles Canvas */}
-      <div ref={canvasRef} className="w-full max-w-sm mb-8 sm:mb-12 flex justify-center bg-white p-4 rounded-lg">
+      <div ref={canvasRef} className="w-full max-w-sm mb-8 sm:mb-12 flex justify-center p-4 rounded-lg" style={{ backgroundColor: "#FAFAFA" }}>
         <IntimacyCircles texts={circleTexts} onCircleClick={handleCircleClick} />
       </div>
 
